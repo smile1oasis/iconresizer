@@ -1,3 +1,41 @@
+<#
+===========================================
+ ICON RESIZER – Game Logo Converter (v1.0)
+===========================================
+
+Author: sr15
+Repository: https://github.com/smile1oasis/ImageResolutionConverter
+Last Updated: November 2025
+Tested on: Windows PowerShell 5.1 / PowerShell 7+
+
+Description:
+    Converts your game logos or icons into multiple resolutions.
+    Ideal for preparing assets for Android, iOS, and Windows app stores.
+
+Usage:
+    1. Right-click the script and select "Run with PowerShell"
+    2. Select the image you want to resize (the script creates copies)
+    3. Choose preset resolutions or enter custom values (comma or space separated)
+    4. Press "Resize Image(s)"
+    5. The resized images are saved in the same folder as the original
+
+Example Output:
+    logo_512x512.png
+    logo_256x256.png
+    logo_96x96.png
+
+Supported Formats:
+    .png, .jpg, .jpeg, .bmp, .gif, .ico
+
+Notes:
+    - Original image remains untouched
+    - Works fully offline
+    - Maintains original file format
+    - GUI prevents accidental resizing issues
+
+-------------------------------------------
+#>
+
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName Microsoft.VisualBasic
@@ -5,8 +43,11 @@ Add-Type -AssemblyName Microsoft.VisualBasic
 # -------------------------------
 # WELCOME SCREEN (GUI + Console)
 # -------------------------------
+
+
 Write-Host "======================================" -ForegroundColor Cyan
 Write-Host "         // ICON RESIZER //          " -ForegroundColor Yellow
+Write-Host "               by SR-15"-ForegroundColor Blue
 Write-Host "======================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "This script will:" -ForegroundColor Green
@@ -28,7 +69,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.Text = "Icon Resizer 1.0.1"
 $form.Size = New-Object System.Drawing.Size(500, 600)
 $form.StartPosition = "CenterScreen"
-$form.MaximizeBox = $true
+$form.MaximizeBox = $false
 $form.MinimizeBox = $true
 $form.FormBorderStyle = "FixedSingle"   # Keeps min/max but prevents manual resize
 
@@ -136,6 +177,44 @@ $resizeButton.Text = "Resize Image(s)"
 $resizeButton.Location = New-Object System.Drawing.Point(150,370)
 $resizeButton.AutoSize = $true
 $form.Controls.Add($resizeButton)
+
+# Auther Label
+$authorLabel = New-Object System.Windows.Forms.Label
+$authorLabel.Text = "by SR!"
+$authorLabel.AutoSize = $true
+$authorLabel.Location = New-Object System.Drawing.Point(50,320)
+$form.Controls.Add($authorLabel)
+
+# ---- Footer Separator Line ----
+$footerLine = New-Object System.Windows.Forms.Label
+$footerLine.BorderStyle = [System.Windows.Forms.BorderStyle]::Fixed3D
+$footerLine.AutoSize = $false
+$footerLine.Height = 2
+$footerLine.Width = 460
+$footerLine.BackColor = [System.Drawing.Color]::Gray
+$footerLine.Location = New-Object System.Drawing.Point(10, 470)
+$form.Controls.Add($footerLine)
+
+# ---- Author LinkLabel ----
+$linkLabel = New-Object System.Windows.Forms.LinkLabel
+$linkLabel.Text = "by SR15  |  GitHub"
+$linkLabel.AutoSize = $true
+$linkLabel.LinkColor = [System.Drawing.Color]::Black
+$linkLabel.ActiveLinkColor = [System.Drawing.Color]::Red
+$linkLabel.VisitedLinkColor = [System.Drawing.Color]::Purple
+$linkLabel.Font = New-Object System.Drawing.Font("Segoe UI", 9, [System.Drawing.FontStyle]::Underline)
+
+# Force integer width to avoid array issue
+[int]$formWidth = [int]$form.ClientSize.Width
+[int]$textWidth = 130
+$linkLabel.Location = New-Object System.Drawing.Point(([math]::Max(0, ($formWidth - $textWidth) / 2)), 490)
+$form.Controls.Add($linkLabel)
+
+# ---- Click Event to Open GitHub ----
+$linkLabel.Add_LinkClicked({
+    Start-Process "https://github.com/smile1oasis/ImageResolutionConverter"
+})
+
 
 # Event: Resize
 $resizeButton.Add_Click({
