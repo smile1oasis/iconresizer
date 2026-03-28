@@ -1,6 +1,6 @@
 <#
 ===========================================
- ICON RESIZER – Game Logo Converter (v1.2)
+ ICON RESIZER – Game Logo Converter (v1.6)
 ===========================================
 #>
 
@@ -12,8 +12,8 @@ Add-Type -AssemblyName Microsoft.VisualBasic
 # MAIN FORM SETUP
 # -------------------------------
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Icon Resizer 1.2.0"
-$form.Size = New-Object System.Drawing.Size(550, 880)
+$form.Text = "Icon Resizer 1.6.0"
+$form.Size = New-Object System.Drawing.Size(650, 950) # Increased height for UI clarity
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = "FixedSingle"
 
@@ -33,7 +33,7 @@ $form.Controls.Add($buttonSelect)
 
 $pictureBox = New-Object System.Windows.Forms.PictureBox
 $pictureBox.Size = New-Object System.Drawing.Size(100, 100)
-$pictureBox.Location = New-Object System.Drawing.Point(400, 10)
+$pictureBox.Location = New-Object System.Drawing.Point(500, 10)
 $pictureBox.SizeMode = "Zoom"
 $pictureBox.BorderStyle = "FixedSingle"
 $form.Controls.Add($pictureBox)
@@ -50,80 +50,83 @@ $prefixBox.Size = New-Object System.Drawing.Size(200, 20)
 $prefixBox.Location = New-Object System.Drawing.Point(20, 110)
 $form.Controls.Add($prefixBox)
 
+# --- iOS Group (Expanded to show ALL resolutions from screenshots) ---
+$groupIOS = New-Object System.Windows.Forms.GroupBox
+$groupIOS.Text = "iOS Icons"
+$groupIOS.Location = New-Object System.Drawing.Point(20, 150)
+$groupIOS.Size = New-Object System.Drawing.Size(190, 400) # Increased height to prevent clipping
+$form.Controls.Add($groupIOS)
+
+$btnAllIOS = New-Object System.Windows.Forms.Button
+$btnAllIOS.Text = "Select All"
+$btnAllIOS.Size = New-Object System.Drawing.Size(70, 20)
+$btnAllIOS.Location = New-Object System.Drawing.Point(110, 15)
+$groupIOS.Controls.Add($btnAllIOS)
+
+# Full list derived from your Unity screenshots
+$resIOS = @(1024, 180, 167, 152, 120, 87, 80, 76, 60, 58, 40, 29, 20)
+$chksIOS = foreach ($res in $resIOS) {
+    $cb = New-Object System.Windows.Forms.CheckBox
+    $cb.Text = "$($res)x$($res)"
+    $cb.Tag = $res
+    $cb.Location = New-Object System.Drawing.Point(10, (35 + ($resIOS.IndexOf($res) * 25)))
+    $groupIOS.Controls.Add($cb); $cb
+}
+
 # --- Android Adaptive Group ---
 $groupAdaptive = New-Object System.Windows.Forms.GroupBox
-$groupAdaptive.Text = "Android Adaptive Icons"
-$groupAdaptive.Location = New-Object System.Drawing.Point(20, 150)
-$groupAdaptive.Size = New-Object System.Drawing.Size(240, 210)
+$groupAdaptive.Text = "Android Adaptive"
+$groupAdaptive.Location = New-Object System.Drawing.Point(225, 150)
+$groupAdaptive.Size = New-Object System.Drawing.Size(190, 210)
 $form.Controls.Add($groupAdaptive)
 
-$btnAllAdaptive = New-Object System.Windows.Forms.Button
-$btnAllAdaptive.Text = "Select All"
-$btnAllAdaptive.Size = New-Object System.Drawing.Size(70, 20)
-$btnAllAdaptive.Location = New-Object System.Drawing.Point(160, 15)
-$groupAdaptive.Controls.Add($btnAllAdaptive)
+$btnAllAdp = New-Object System.Windows.Forms.Button
+$btnAllAdp.Text = "Select All"
+$btnAllAdp.Size = New-Object System.Drawing.Size(70, 20)
+$btnAllAdp.Location = New-Object System.Drawing.Point(110, 15)
+$groupAdaptive.Controls.Add($btnAllAdp)
 
-$resolutionsAdaptive = @(432, 324, 216, 162, 108, 81)
-$chksAdaptive = @()
-for ($i=0; $i -lt $resolutionsAdaptive.Count; $i++) {
+$resAdp = @(432, 324, 216, 162, 108, 81)
+$chksAdp = foreach ($res in $resAdp) {
     $cb = New-Object System.Windows.Forms.CheckBox
-    $cb.Text = "$($resolutionsAdaptive[$i])x$($resolutionsAdaptive[$i])"
-    $cb.Location = New-Object System.Drawing.Point(10, (35 + ($i * 25)))
-    $cb.Tag = $resolutionsAdaptive[$i]
-    $groupAdaptive.Controls.Add($cb)
-    $chksAdaptive += $cb
+    $cb.Text = "$($res)x$($res)"; $cb.Tag = $res
+    $cb.Location = New-Object System.Drawing.Point(10, (35 + ($resAdp.IndexOf($res) * 25)))
+    $groupAdaptive.Controls.Add($cb); $cb
 }
 
 # --- Android Legacy Group ---
 $groupLegacy = New-Object System.Windows.Forms.GroupBox
-$groupLegacy.Text = "Android Legacy Icons"
-$groupLegacy.Location = New-Object System.Drawing.Point(280, 150)
-$groupLegacy.Size = New-Object System.Drawing.Size(240, 210)
+$groupLegacy.Text = "Android Legacy"
+$groupLegacy.Location = New-Object System.Drawing.Point(430, 150)
+$groupLegacy.Size = New-Object System.Drawing.Size(190, 210)
 $form.Controls.Add($groupLegacy)
 
-$btnAllLegacy = New-Object System.Windows.Forms.Button
-$btnAllLegacy.Text = "Select All"
-$btnAllLegacy.Size = New-Object System.Drawing.Size(70, 20)
-$btnAllLegacy.Location = New-Object System.Drawing.Point(160, 15)
-$groupLegacy.Controls.Add($btnAllLegacy)
+$btnAllLeg = New-Object System.Windows.Forms.Button
+$btnAllLeg.Text = "Select All"
+$btnAllLeg.Size = New-Object System.Drawing.Size(70, 20)
+$btnAllLeg.Location = New-Object System.Drawing.Point(110, 15)
+$groupLegacy.Controls.Add($btnAllLeg)
 
-$resolutionsLegacy = @(192, 144, 96, 72, 48, 36)
-$chksLegacy = @()
-for ($i=0; $i -lt $resolutionsLegacy.Count; $i++) {
+$resLeg = @(192, 144, 96, 72, 48, 36)
+$chksLeg = foreach ($res in $resLeg) {
     $cb = New-Object System.Windows.Forms.CheckBox
-    $cb.Text = "$($resolutionsLegacy[$i])x$($resolutionsLegacy[$i])"
-    $cb.Location = New-Object System.Drawing.Point(10, (35 + ($i * 25)))
-    $cb.Tag = $resolutionsLegacy[$i]
-    $groupLegacy.Controls.Add($cb)
-    $chksLegacy += $cb
+    $cb.Text = "$($res)x$($res)"; $cb.Tag = $res
+    $cb.Location = New-Object System.Drawing.Point(10, (35 + ($resLeg.IndexOf($res) * 25)))
+    $groupLegacy.Controls.Add($cb); $cb
 }
 
-# --- Other Common Icons ---
+# --- Common & Custom ---
 $groupCommon = New-Object System.Windows.Forms.GroupBox
 $groupCommon.Text = "Other Common Icons"
-$groupCommon.Location = New-Object System.Drawing.Point(20, 370)
-$groupCommon.Size = New-Object System.Drawing.Size(500, 65)
+$groupCommon.Location = New-Object System.Drawing.Point(225, 370)
+$groupCommon.Size = New-Object System.Drawing.Size(395, 65)
 $form.Controls.Add($groupCommon)
 
-$chk512 = New-Object System.Windows.Forms.CheckBox
-$chk512.Text = "512x512"; $chk512.Location = New-Object System.Drawing.Point(10, 30); $chk512.Tag = 512
-$groupCommon.Controls.Add($chk512)
+$chk512 = New-Object System.Windows.Forms.CheckBox; $chk512.Text = "512x512"; $chk512.Tag = 512; $chk512.Location = New-Object System.Drawing.Point(10, 30); $groupCommon.Controls.Add($chk512)
+$chk256 = New-Object System.Windows.Forms.CheckBox; $chk256.Text = "256x256"; $chk256.Tag = 256; $chk256.Location = New-Object System.Drawing.Point(120, 30); $groupCommon.Controls.Add($chk256)
 
-$chk256 = New-Object System.Windows.Forms.CheckBox
-$chk256.Text = "256x256"; $chk256.Location = New-Object System.Drawing.Point(120, 30); $chk256.Tag = 256
-$groupCommon.Controls.Add($chk256)
-
-# --- Custom Sizes ---
-$customLabel = New-Object System.Windows.Forms.Label
-$customLabel.Text = "Custom (comma separated, e.g. 1024, 128):"
-$customLabel.Location = New-Object System.Drawing.Point(20, 450)
-$customLabel.AutoSize = $true
-$form.Controls.Add($customLabel)
-
-$customBox = New-Object System.Windows.Forms.TextBox
-$customBox.Size = New-Object System.Drawing.Size(500, 20)
-$customBox.Location = New-Object System.Drawing.Point(20, 470)
-$form.Controls.Add($customBox)
+$customBox = New-Object System.Windows.Forms.TextBox; $customBox.Size = New-Object System.Drawing.Size(600, 20); $customBox.Location = New-Object System.Drawing.Point(20, 600)
+$form.Controls.AddRange(@((New-Object System.Windows.Forms.Label -Property @{Text="Custom (comma separated):"; Location=New-Object System.Drawing.Point(20, 580); AutoSize=$true}), $customBox))
 
 # -------------------------------
 # LOGIC & EVENTS
@@ -132,88 +135,52 @@ $form.Controls.Add($customBox)
 $global:selectedFile = $null
 $buttonSelect.Add_Click({
     $ofd = New-Object System.Windows.Forms.OpenFileDialog
-    $ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.ico"
+    $ofd.Filter = "Images|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.ico"
     if ($ofd.ShowDialog() -eq "OK") {
         $global:selectedFile = $ofd.FileName
         $pictureBox.Image = [System.Drawing.Image]::FromFile($global:selectedFile)
     }
 })
 
-# Toggle logic for Adaptive
-$btnAllAdaptive.Add_Click({
-    $isAnyUnchecked = ($chksAdaptive | Where-Object { -not $_.Checked })
-    foreach ($chk in $chksAdaptive) { $chk.Checked = [bool]$isAnyUnchecked }
-})
-
-# Toggle logic for Legacy
-$btnAllLegacy.Add_Click({
-    $isAnyUnchecked = ($chksLegacy | Where-Object { -not $_.Checked })
-    foreach ($chk in $chksLegacy) { $chk.Checked = [bool]$isAnyUnchecked }
-})
+$btnAllIOS.Add_Click({ $v = !($chksIOS[0].Checked); $chksIOS | % { $_.Checked = $v } })
+$btnAllAdp.Add_Click({ $v = !($chksAdp[0].Checked); $chksAdp | % { $_.Checked = $v } })
+$btnAllLeg.Add_Click({ $v = !($chksLeg[0].Checked); $chksLeg | % { $_.Checked = $v } })
 
 $resizeButton = New-Object System.Windows.Forms.Button
-$resizeButton.Text = "Resize Image(s)"
-$resizeButton.Font = New-Object System.Drawing.Font("Arial", 10, [System.Drawing.FontStyle]::Bold)
-$resizeButton.Size = New-Object System.Drawing.Size(200, 50)
-$resizeButton.Location = New-Object System.Drawing.Point(175, 530)
-$resizeButton.BackColor = [System.Drawing.Color]::LightGreen
+$resizeButton.Text = "RESIZE ALL"; $resizeButton.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold); $resizeButton.Size = New-Object System.Drawing.Size(300, 60); $resizeButton.Location = New-Object System.Drawing.Point(175, 660); $resizeButton.BackColor = [System.Drawing.Color]::LightGreen
 $form.Controls.Add($resizeButton)
 
 $resizeButton.Add_Click({
-    if (-not $global:selectedFile) {
-        [System.Windows.Forms.MessageBox]::Show("Please select an image first.")
-        return
-    }
+    if (-not $global:selectedFile) { [System.Windows.Forms.MessageBox]::Show("Select an image."); return }
 
     $resolutions = @()
-    ($chksAdaptive + $chksLegacy + $chk512 + $chk256) | ForEach-Object {
-        if ($_.Checked) { $resolutions += [int]$_.Tag }
-    }
-
-    if (-not [string]::IsNullOrWhiteSpace($customBox.Text)) {
-        $customValues = $customBox.Text -split '[, ]+' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
-        $resolutions += $customValues
-    }
-
+    ($chksIOS + $chksAdp + $chksLeg + $chk512 + $chk256) | % { if ($_.Checked) { $resolutions += $_.Tag } }
+    if ($customBox.Text) { $resolutions += ($customBox.Text -split '[, ]+' | ? { $_ -match '^\d+(\.\d+)?$' } | % { [double]$_ }) }
     $resolutions = $resolutions | Sort-Object -Unique -Descending
 
-    if ($resolutions.Count -eq 0) {
-        [System.Windows.Forms.MessageBox]::Show("Please select or enter at least one resolution.")
-        return
-    }
+    if ($resolutions.Count -eq 0) { [System.Windows.Forms.MessageBox]::Show("Select a size."); return }
 
     $img = [System.Drawing.Image]::FromFile($global:selectedFile)
     $dir = [System.IO.Path]::GetDirectoryName($global:selectedFile)
     $name = [System.IO.Path]::GetFileNameWithoutExtension($global:selectedFile)
-    $ext  = [System.IO.Path]::GetExtension($global:selectedFile)
-    
-    # Prefix Logic: No underscore if prefix is empty
+    $ext = [System.IO.Path]::GetExtension($global:selectedFile)
     $prefix = $prefixBox.Text.Trim()
     $fileBase = if ($prefix) { "${prefix}_${name}" } else { $name }
 
     foreach ($res in $resolutions) {
-        $bmp = New-Object System.Drawing.Bitmap $res, $res
+        $w = $h = [int][Math]::Round($res)
+        $bmp = New-Object System.Drawing.Bitmap $w, $h
         $g = [System.Drawing.Graphics]::FromImage($bmp)
-        $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-        $g.DrawImage($img, 0, 0, $res, $res)
-        
-        # Consistent naming: fileBase_Size.ext
-        $outputFile = Join-Path $dir ("$fileBase" + "_" + $res + "x" + $res + $ext)
-        $bmp.Save($outputFile, $img.RawFormat)
-        
-        $g.Dispose()
-        $bmp.Dispose()
+        $g.InterpolationMode = "HighQualityBicubic"
+        $g.DrawImage($img, 0, 0, $w, $h)
+        $bmp.Save((Join-Path $dir ("$fileBase" + "_" + $res + "x" + $res + $ext)), $img.RawFormat)
+        $g.Dispose(); $bmp.Dispose()
     }
-
     $img.Dispose()
-    [System.Windows.Forms.MessageBox]::Show("Success! Created $($resolutions.Count) images in folder.")
+    [System.Windows.Forms.MessageBox]::Show("Success! Created $($resolutions.Count) images.")
 })
 
-# Footer
-$linkLabel = New-Object System.Windows.Forms.LinkLabel
-$linkLabel.Text = "by SR15  |  GitHub Repository"
-$linkLabel.AutoSize = $true
-$linkLabel.Location = New-Object System.Drawing.Point(190, 810)
+$linkLabel = New-Object System.Windows.Forms.LinkLabel; $linkLabel.Text = "by SR15 | GitHub Repo"; $linkLabel.AutoSize = $true; $linkLabel.Location = New-Object System.Drawing.Point(250, 850)
 $linkLabel.Add_LinkClicked({ Start-Process "https://github.com/smile1oasis/ImageResolutionConverter" })
 $form.Controls.Add($linkLabel)
 
